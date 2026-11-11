@@ -53,10 +53,12 @@ class StatusResponse(BaseModel):
     """Vector store and chatbot configuration status."""
 
     status: str
+    vector_store: str
     documents_indexed: int
     gemini_api_configured: bool
-    chroma_db_dir: str
-    collection_name: str
+    pinecone_configured: bool
+    index_name: str
+    namespace: str
 
 
 @router.post(
@@ -68,7 +70,7 @@ class StatusResponse(BaseModel):
 async def chat_endpoint(payload: ChatRequest):
     """Accepts a question from a portfolio visitor, retrieves relevant
 
-    sections from ChromaDB, and returns a verified, factual response with sources.
+    sections from Pinecone, and returns a verified, factual response with sources.
     """
     user_query = payload.message or payload.question
     if not user_query or not user_query.strip():
@@ -98,17 +100,19 @@ async def chat_endpoint(payload: ChatRequest):
     summary="Get Chatbot & Vector Store Status",
 )
 async def chat_status():
-    """Returns the operational status of the ChromaDB vector store and API configuration."""
+    """Returns the operational status of the Pinecone vector store and API configuration."""
     try:
         rag = get_rag_pipeline()
         vs_status = rag.vector_store.get_status()
         has_key = bool(get_gemini_api_key())
         return StatusResponse(
             status="ready" if vs_status["document_count"] > 0 else "needs_ingestion",
+            vector_store=vs_status["backend"],
             documents_indexed=vs_status["document_count"],
             gemini_api_configured=has_key,
-            chroma_db_dir=vs_status["persist_dir"],
-            collection_name=vs_status["collection_name"],
+            pinecone_configured=vs_status["pinecone_configured"],
+            index_name=vs_status["index_name"],
+            namespace=vs_status["namespace"],
         )
     except Exception as e:
         logger.error("Status endpoint error: %s", e)

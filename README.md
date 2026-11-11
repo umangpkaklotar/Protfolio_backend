@@ -13,7 +13,7 @@ The chatbot provides verified, context-grounded answers about Umang's skills, ex
 ## 1. What the Chatbot Does
 
 - **Domain-Specific Portfolio Knowledge**: Ingests comprehensive details from `backend/app/chatbot/knowledge.md` covering Computer Vision, Deep Learning (YOLOv8, AOI), Industrial Digital Twins (ROS 2, Gazebo Sim 8), Enterprise RAG, full-stack web development, and work experience.
-- **Fast Similarity Search**: Uses a persistent local **ChromaDB** vector store to index and retrieve relevant portfolio excerpts in milliseconds.
+- **Fast Similarity Search**: Uses a managed serverless **Pinecone** vector store to index and retrieve relevant portfolio excerpts in milliseconds.
 - **Zero Hallucination Guardrails**: The system prompt strictly limits answers to the verified portfolio context. If a detail is missing, it transparently directs the user to Umang's direct email (`upkaklotar7@gmail.com`).
 - **Google Gemini Integration**: Uses Google's official Gemini models (`gemini-1.5-flash` or `gemini-2.0-flash`) and embeddings (`models/text-embedding-004`).
 - **Developer-Friendly Fallback**: If `GEMINI_API_KEY` is not yet configured, the similarity search still functions and returns retrieved context along with setup guidance, ensuring zero crashes during local setup.
@@ -31,16 +31,15 @@ backend/
 │   ├── chatbot/
 │   │   ├── __init__.py
 │   │   ├── knowledge.md            # Comprehensive source of portfolio truth
-│   │   ├── ingest.py               # Ingestion & chunking script for ChromaDB
+│   │   ├── ingest.py               # Ingestion & chunking script for Pinecone
 │   │   ├── rag.py                  # RAG pipeline orchestration & prompt formatting
-│   │   ├── embeddings.py           # Gemini embedding generator & protocol
-│   │   └── vector_store.py         # ChromaDB persistent client & querying
+│   │   ├── embeddings.py           # Gemini embedding generator
+│   │   └── vector_store.py         # Pinecone serverless index client & querying
 │   │
 │   └── routes/
 │       ├── __init__.py
 │       └── chatbot.py              # POST /api/chat and GET /api/chat/status
 │
-├── chroma_db/                      # Persistent ChromaDB vector store directory
 ├── .env.example                    # Environment variable template
 ├── requirements.txt                # Python dependencies
 └── README.md                       # Backend documentation
@@ -112,9 +111,12 @@ GEMINI_MODEL=gemini-1.5-flash
 # Embedding Model
 GEMINI_EMBEDDING_MODEL=models/text-embedding-004
 
-# ChromaDB Persistent Storage Directory
-CHROMA_DB_DIR=chroma_db
-CHROMA_COLLECTION_NAME=portfolio_knowledge
+# Pinecone Vector Database Configuration
+PINECONE=your_actual_pinecone_api_key_here
+PINECONE_INDEX_NAME=portfolio-knowledge
+PINECONE_NAMESPACE=portfolio
+PINECONE_CLOUD=aws
+PINECONE_REGION=us-east-1
 
 # Server settings
 HOST=0.0.0.0
@@ -127,7 +129,7 @@ CORS_ORIGINS=http://localhost:5173,http://localhost:3000,http://127.0.0.1:5173
 ---
 
 
-## 5. How to Generate / Update the ChromaDB Vector Store
+## 5. How to Generate / Update the Pinecone Vector Store
 
 Run the ingestion script from the `backend/` directory:
 
@@ -143,10 +145,10 @@ python app/chatbot/ingest.py
 
 ### What this script does:
 1. Loads `backend/app/chatbot/knowledge.md`.
-2. Segments sections and headers into overlapping semantic chunks (max 900 characters, 150 overlap).
-3. Connects to the persistent local database at `backend/chroma_db/`.
-4. Re-creates/resets the collection to **prevent duplicate documents** on repeated runs.
-5. Embeds each chunk and upserts with section metadata (`section`, `source`, `chunk_index`).
+2. Segments sections and headers into overlapping semantic chunks (max 850 characters, 120 overlap).
+3. Connects to Pinecone using the `PINECONE` API key from `backend/.env` and creates the serverless index if needed.
+4. Clears the configured namespace to **prevent duplicate documents** on repeated runs.
+5. Embeds each chunk and upserts with section metadata (`section`, `source`, `chunk_index`) and chunk text.
 6. Prints a summary of indexed documents.
 
 Whenever you update `knowledge.md`, simply re-run the command above to refresh the vector store.
@@ -184,11 +186,11 @@ Document chunking (900 chars / 150 overlap with section headings)
       ↓
 Embeddings (Google Gemini text-embedding-004)
       ↓
-ChromaDB (Persistent collection at backend/chroma_db/)
+Pinecone (Serverless index `portfolio-knowledge`, namespace `portfolio`)
       ↓
 [ User Query: "What is Umang's PCB Defect project?" ]
       ↓
-Similarity Search (Top-K closest cosine distance excerpts)
+Similarity Search (Top-K closest cosine similarity excerpts)
       ↓
 Context Grounding + System Instructions
       ↓
@@ -197,7 +199,7 @@ LLM (Google Gemini 1.5 Flash @ temperature 0.2)
 Answer + Source Section Citations
 ```
 
-1. **Retrieval**: When a query hits `POST /api/chat`, the query is embedded and matched against ChromaDB's persistent index.
+1. **Retrieval**: When a query hits `POST /api/chat`, the query is embedded and matched against Pinecone's index.
 2. **Context Formatting**: Top 4 matching chunks are assembled with their respective section headers.
 3. **Prompt Framing**: The context is wrapped inside strict system instructions preventing speculation or hallucinations.
 4. **Generation**: The prompt is processed by Google Gemini, returning a concise, professional answer with referenced sources.

@@ -5,15 +5,21 @@ Runs the backend API and provides the chatbot endpoint at /api/chat.
 
 import os
 import logging
+from pathlib import Path
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 
+BACKEND_DIR = Path(__file__).resolve().parent.parent
+env_file = BACKEND_DIR / ".env"
+if env_file.exists():
+    load_dotenv(env_file, override=True)
+else:
+    load_dotenv(override=True)
+
 from app.routes.chatbot import router as chatbot_router
 from app.chatbot.vector_store import PortfolioVectorStore
-
-load_dotenv()
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 logger = logging.getLogger(__name__)
@@ -26,11 +32,16 @@ async def lifespan(app: FastAPI):
     try:
         vs = PortfolioVectorStore()
         count = vs.count()
-        logger.info("ChromaDB vector store connected: %d documents in collection '%s'.", count, vs.collection_name)
+        logger.info(
+            "Pinecone vector store connected: %d documents in index '%s' (namespace='%s').",
+            count,
+            vs.index_name,
+            vs.namespace or "__default__",
+        )
         if count == 0:
             logger.warning("Vector store is empty! Run 'python -m app.chatbot.ingest' to index knowledge.md.")
     except Exception as e:
-        logger.warning("Could not initialize ChromaDB at startup: %s", e)
+        logger.warning("Could not initialize Pinecone at startup: %s", e)
     yield
     logger.info("Portfolio Backend shutting down.")
 

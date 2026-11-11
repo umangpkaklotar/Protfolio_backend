@@ -1,8 +1,7 @@
 """Ingestion pipeline for Umang P. Kaklotar's Portfolio Chatbot.
 
 Reads backend/app/chatbot/knowledge.md, splits the content into semantic,
-section-aware chunks, generates embeddings, and upserts them into persistent
-ChromaDB at backend/chroma_db/.
+section-aware chunks, generates embeddings, and upserts them into Pinecone.
 
 Ensures no duplicate documents when run multiple times.
 """
@@ -22,7 +21,11 @@ if str(backend_root) not in sys.path:
 
 from app.chatbot.vector_store import PortfolioVectorStore
 
-load_dotenv()
+env_file = backend_root / ".env"
+if env_file.exists():
+    load_dotenv(env_file, override=True)
+else:
+    load_dotenv(override=True)
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 logger = logging.getLogger(__name__)
@@ -166,7 +169,7 @@ def run_ingest(force_reset: bool = True) -> Dict[str, Any]:
 
     1. Reads knowledge.md
     2. Generates semantic chunks
-    3. Recreates/cleans ChromaDB collection to avoid duplicates
+    3. Clears Pinecone namespace to avoid duplicates
     4. Upserts chunks with embeddings
     """
     logger.info("Starting portfolio knowledge ingestion...")
@@ -181,14 +184,18 @@ def run_ingest(force_reset: bool = True) -> Dict[str, Any]:
     vs = PortfolioVectorStore()
 
     if force_reset:
-        logger.info("Resetting collection '%s' to avoid duplicate documents...", vs.collection_name)
-        vs.reset_collection()
+        logger.info(
+            "Resetting Pinecone namespace '%s' in index '%s' to avoid duplicate documents...",
+            vs.namespace or "__default__",
+            vs.index_name,
+        )
+        vs.reset_namespace()
 
     ids = [c["id"] for c in chunks]
     documents = [c["content"] for c in chunks]
     metadatas = [c["metadata"] for c in chunks]
 
-    logger.info("Embedding and upserting %d documents into ChromaDB...", len(ids))
+    logger.info("Embedding and upserting %d documents into Pinecone...", len(ids))
     count = vs.upsert_documents(ids=ids, documents=documents, metadatas=metadatas)
 
     total_in_db = vs.count()
@@ -196,11 +203,12 @@ def run_ingest(force_reset: bool = True) -> Dict[str, Any]:
 
     return {
         "status": "success",
+        "vector_store": "pinecone",
         "chunks_created": len(chunks),
         "documents_upserted": count,
-        "total_in_collection": total_in_db,
-        "persist_dir": vs.persist_dir,
-        "collection_name": vs.collection_name,
+        "total_in_index": total_in_db,
+        "index_name": vs.index_name,
+        "namespace": vs.namespace or "__default__",
     }
 
 

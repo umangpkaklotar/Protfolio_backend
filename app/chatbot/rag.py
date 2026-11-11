@@ -1,6 +1,6 @@
 """Retrieval-Augmented Generation (RAG) module for Umang P. Kaklotar's Portfolio Chatbot.
 
-Orchestrates similarity search via ChromaDB vector store, constructs context-grounded
+Orchestrates similarity search via Pinecone vector store, constructs context-grounded
 prompts, and generates accurate answers using Google Gemini LLM.
 """
 
@@ -58,7 +58,7 @@ class PortfolioRAG:
         self.top_k = top_k
 
     def retrieve_context(self, question: str) -> List[Dict[str, Any]]:
-        """Retrieve top-k relevant chunks from ChromaDB."""
+        """Retrieve top-k relevant chunks from Pinecone."""
         return self.vector_store.query(question, n_results=self.top_k)
 
     def _call_gemini_llm(self, prompt: str, api_key: str) -> str:
@@ -175,7 +175,7 @@ class PortfolioRAG:
         if not api_key:
             answer = (
                 "⚠️ **Gemini API Key Required**\n\n"
-                "The portfolio similarity search successfully retrieved relevant context from ChromaDB, "
+                                "The portfolio similarity search successfully retrieved relevant context from Pinecone, "
                 "but `GEMINI_API_KEY` is not yet configured in `backend/.env` to generate an LLM response.\n\n"
                 "**Retrieved Context Summary:**\n"
                 f"{chunks[0]['content'][:450]}...\n\n"

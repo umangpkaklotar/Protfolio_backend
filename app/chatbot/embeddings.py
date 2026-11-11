@@ -8,7 +8,7 @@ import os
 import hashlib
 import logging
 from pathlib import Path
-from typing import List, Optional, Any
+from typing import List, Optional
 import requests
 from dotenv import load_dotenv
 
@@ -19,18 +19,11 @@ if env_file.exists():
 else:
     load_dotenv(override=True)
 
-try:
-    from chromadb.api.types import EmbeddingFunction, Documents, Embeddings
-    BaseEF = EmbeddingFunction[Documents]
-except ImportError:
-    BaseEF = object
-    Documents = List[str]
-    Embeddings = List[List[float]]
-
 logger = logging.getLogger(__name__)
 
-# Default Gemini embedding model (gemini-embedding-2 is the active model)
+# Default Gemini embedding model (gemini-embedding-2 produces 3072-d vectors)
 DEFAULT_EMBEDDING_MODEL = os.getenv("GEMINI_EMBEDDING_MODEL", "gemini-embedding-2")
+DEFAULT_EMBEDDING_DIM = int(os.getenv("PINECONE_DIMENSION", "3072"))
 
 
 def get_gemini_api_key() -> str:
@@ -38,10 +31,10 @@ def get_gemini_api_key() -> str:
     return os.getenv("GEMINI_API_KEY", "").strip()
 
 
-def _fallback_deterministic_embedding(text: str, dim: int = 768) -> List[float]:
+def _fallback_deterministic_embedding(text: str, dim: int = DEFAULT_EMBEDDING_DIM) -> List[float]:
     """Generate a pseudo-deterministic normalized vector for offline testing
 
-    when GEMINI_API_KEY is not configured yet. This allows ChromaDB ingestion
+    when GEMINI_API_KEY is not configured yet. This allows vector store ingestion
     and testing to complete without throwing hard errors.
     """
     seed = int(hashlib.sha256(text.encode("utf-8")).hexdigest(), 16)
@@ -57,30 +50,37 @@ def _fallback_deterministic_embedding(text: str, dim: int = 768) -> List[float]:
     return vector
 
 
-class PortfolioEmbedder(BaseEF):
-    """Embedding generator supporting Google Gemini and ChromaDB."""
+class PortfolioEmbedder:
+    """Embedding generator using Google Gemini embeddings for Pinecone retrieval."""
 
-    def __init__(self, api_key: Optional[str] = None, model: Optional[str] = None):
+    def __init__(
+        self,
+        api_key: Optional[str] = None,
+        model: Optional[str] = None,
+        fallback_dim: Optional[int] = None,
+    ):
         self.api_key = (api_key or get_gemini_api_key()).strip()
         self.model = model or os.getenv("GEMINI_EMBEDDING_MODEL", DEFAULT_EMBEDDING_MODEL)
         self.model_path = self.model
+        self.fallback_dim = fallback_dim or DEFAULT_EMBEDDING_DIM
 
-    def name(self) -> str:
-        """Name of this embedding function for ChromaDB registration."""
-        return "portfolio_gemini_embedder"
-
-    def embed_documents(self, texts: List[str]) -> List[List[float]]:
+    def embed_documents(
+        self,
+        texts: List[str],
+        fallback_dim: Optional[int] = None,
+    ) -> List[List[float]]:
         """Embed a batch of document strings with automatic model fallback."""
         if not texts:
             return []
 
+        dim = fallback_dim or self.fallback_dim
         api_key = self.api_key or get_gemini_api_key()
         if not api_key:
             logger.warning(
                 "GEMINI_API_KEY is not set. Using deterministic fallback embeddings for %d documents.",
                 len(texts),
             )
-            return [_fallback_deterministic_embedding(t) for t in texts]
+            return [_fallback_deterministic_embedding(t, dim=dim) for t in texts]
 
         # Candidate models to try in order
         configured = (self.model_path or DEFAULT_EMBEDDING_MODEL).replace("models/", "").strip()
@@ -136,25 +136,11 @@ class PortfolioEmbedder(BaseEF):
 
         # Final offline fallback if network or API failed
         logger.warning("Falling back to deterministic offline embeddings.")
-        return [_fallback_deterministic_embedding(t) for t in texts]
+        return [_fallback_deterministic_embedding(t, dim=dim) for t in texts]
 
-    def embed_query(self, input: Any = None, text: Any = None, *args, **kwargs) -> Any:
-        """Embed query input (string or list of strings) for ChromaDB."""
-        target = input if input is not None else text
-        if target is None:
+    def embed_query(self, text: str, fallback_dim: Optional[int] = None) -> List[float]:
+        """Embed a single query string into a dense vector."""
+        if not text:
             return []
-        if isinstance(target, str):
-            target = [target]
-        elif not isinstance(target, (list, tuple)):
-            target = [str(target)]
-        return self.embed_documents(list(target))
-
-    def __call__(self, input: Any = None, *args, **kwargs) -> Any:
-        """ChromaDB embedding function protocol call."""
-        if input is None:
-            input = []
-        if isinstance(input, str):
-            input = [input]
-        elif not isinstance(input, (list, tuple)):
-            input = [str(input)]
-        return self.embed_documents(list(input))
+        vectors = self.embed_documents([text], fallback_dim=fallback_dim)
+        return vectors[0] if vectors else []
