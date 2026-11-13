@@ -17,11 +17,11 @@
 
 # About
 
-Umang P. Kaklotar is a Computer Vision Engineer, Web Developer, Frontend Specialist, and AI/ML Enthusiast based in Surat, Gujarat, India. He holds a solid academic foundation from his Bachelor of Computer Applications (BCA) and practical hands-on production experience from Jemistry Info Solutions LLP.
+I’m **Umang P. Kaklotar**, an AI/ML Enthusiast specializing in **Machine Learning, Deep Learning, and Computer Vision**. With a solid foundation from my **Bachelor of Computer Applications (BCA)** and hands-on experience at **Jemistry Info Solutions**, I focus on turning complex technical ideas into practical, intelligent solutions.
 
-His work bridges the gap between expressive creative design and deep technical architecture, operating at the intersection of:
-1. High-performance, responsive 60fps web interfaces and digital experiences using modern frameworks like React, GSAP, Lenis, and Vite.
-2. Production-grade Artificial Intelligence and Deep Learning solutions, specializing in Automated Optical Inspection (AOI), YOLOv8 real-time object detection, ROS 2 and Gazebo industrial digital twin simulations, and enterprise Retrieval-Augmented Generation (RAG) platforms.
+My work focuses on building AI-powered systems using technologies such as **Python, PyTorch, OpenCV, YOLO, and modern Machine Learning tools**. I enjoy solving real-world problems through computer vision, predictive models, and intelligent automation.
+
+I’m passionate about exploring new AI technologies, developing impactful projects, and continuously improving my skills in **ML, Deep Learning, and Computer Vision**.
 
 ### Mindset & Engineering Pillars
 - **Clean Architecture**: Designing clean, modular, and maintainable codebases built to scale.
