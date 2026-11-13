@@ -26,7 +26,7 @@ logger = logging.getLogger(__name__)
 # Default Gemini model for answering questions (gemini-3.1-flash-lite is the active default)
 DEFAULT_GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-3.1-flash-lite")
 
-SYSTEM_INSTRUCTION = """You are Antigravity, the official AI Portfolio Assistant for Umang P. Kaklotar.
+SYSTEM_INSTRUCTION = """You are Umang AI, the official AI Portfolio Assistant for Umang P. Kaklotar.
 Your role is to answer questions from visitors, recruiters, engineering managers, and clients about Umang's skills, projects, experience, education, background, and services.
 
 STRICT GUIDELINES:
