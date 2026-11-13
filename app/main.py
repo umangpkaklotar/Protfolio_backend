@@ -53,13 +53,23 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-# Configure CORS so the React frontend (Vite on localhost:5173 or deployed origin) can connect cleanly
-allowed_origins = os.getenv("CORS_ORIGINS", "http://localhost:5173,http://localhost:3000,http://127.0.0.1:5173").split(",")
-allowed_origins = [orig.strip() for orig in allowed_origins if orig.strip()]
+# Configure CORS so the React frontend (Vite on localhost or deployed origin) can connect cleanly
+raw_origins = os.getenv(
+    "CORS_ORIGINS",
+    "http://localhost:5173,http://localhost:3000,http://127.0.0.1:5173,https://protfolio-frontend.upkaklotar7.workers.dev",
+).split(",")
+
+allowed_origins_set = set()
+for orig in raw_origins:
+    clean = orig.strip().strip("'\"")
+    if clean:
+        allowed_origins_set.add(clean)
+        allowed_origins_set.add(clean.rstrip("/"))
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=allowed_origins if "*" not in allowed_origins else ["*"],
+    allow_origins=list(allowed_origins_set) if "*" not in allowed_origins_set else ["*"],
+    allow_origin_regex=r"^https?://(localhost|127\.0\.0\.1|.*\.workers\.dev|.*\.pages\.dev)(:\d+)?$",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
