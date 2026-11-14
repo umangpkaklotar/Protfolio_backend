@@ -161,6 +161,16 @@ Umang possesses a comprehensive technical skill set spanning frontend engineerin
 
 ---
 
+## AI/ML Training
+
+- **Institution**: DataMites
+- **Location**: Bangalore, India
+- **Status**: Currently attending
+- **Focus**: Artificial Intelligence and Machine Learning
+- **Description**: I am currently attending AI/ML classes at DataMites in Bangalore, focusing on building practical knowledge and skills in Artificial Intelligence and Machine Learning.
+
+---
+
 # Certifications
 
 - **Certifications**: Not specified in existing portfolio.
@@ -406,6 +416,18 @@ Document AI is an enterprise-grade multi-format RAG platform where users upload 
 
 ### Where did Umang study?
 Umang is graduating in 2025 with a Bachelor of Computer Applications (BCA) from Smt ZS Patel College of Management and Technology in Surat, Gujarat, India.
+
+### Where are you currently studying AI/ML?
+I am currently attending AI/ML classes at DataMites in Bangalore, India.
+
+### Are you currently learning AI/ML?
+Yes. I am currently attending AI/ML classes at DataMites in Bangalore, India.
+
+### Where are you taking your AI/ML classes?
+I am taking my AI/ML classes at DataMites in Bangalore, India.
+
+### What are you currently studying?
+I am currently studying Artificial Intelligence and Machine Learning through classes at DataMites in Bangalore, India.
 
 ### What practical work experience does Umang have?
 Umang completed a 6-month internship as a Frontend Developer Intern at Jemistry Info Solutions LLP in Surat, building responsive web interfaces, converting Figma designs to React components, and integrating REST APIs.

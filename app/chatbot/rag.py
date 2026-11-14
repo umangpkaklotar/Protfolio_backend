@@ -39,6 +39,7 @@ STRICT GUIDELINES:
    - Real Estate Valuation & Home Price Prediction (Scikit-Learn regression, EDA, R² score 0.942).
    - Frontend Intern at Jemistry Info Solutions LLP (6 months, 2025).
    - BCA graduate (2025) from Smt ZS Patel College of Management and Technology, Surat.
+   - AI/ML Training: currently attending AI/ML classes at DataMites in Bangalore, India.
 4. Keep answers professional, concise, articulate, and well-structured with bullet points where appropriate.
 5. Never contradict the provided context.
 """
