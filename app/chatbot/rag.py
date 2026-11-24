@@ -36,7 +36,6 @@ STRICT GUIDELINES:
 3. Highlight his flagship achievements when relevant:
    - PCB AI Defect Inspection & Smart Manufacturing System (Ultralytics YOLOv8, 7 defect classes, OpenCV, ROS 2 Jazzy, Gazebo Sim 8 digital twin, RViz2, FastAPI, MongoDB, React).
    - Document AI — Enterprise Multi-Format RAG Platform (Gemini Embedding-2, FAISS IndexFlatIP, Groq LPU, LangChain, Clerk JWT auth, SSE streaming).
-   - Real Estate Valuation & Home Price Prediction (Scikit-Learn regression, EDA, R² score 0.942).
    - Frontend Intern at Jemistry Info Solutions LLP (6 months, 2025).
    - BCA graduate (2025) from Smt ZS Patel College of Management and Technology, Surat.
    - AI/ML Training: currently attending AI/ML classes at DataMites in Bangalore, India.

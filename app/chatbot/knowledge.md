@@ -179,12 +179,10 @@ Umang possesses a comprehensive technical skill set spanning frontend engineerin
 
 # Projects
 
-Umang's portfolio features 4 primary projects across Computer Vision, Enterprise RAG, Developer Tooling, and Applied Machine Learning:
+Umang's portfolio features 2 flagship industrial AI and Computer Vision projects:
 
 1. **PCB AI Defect Inspection & Smart Manufacturing System** (Flagship Industrial Computer Vision & Robotics Project)
 2. **Document AI — Enterprise Multi-Format RAG Platform with Real-Time Streaming** (Full-Stack AI / Enterprise RAG Project)
-3. **AI-Assisted Multi-Language Code Translation Engine** (AI Developer Tooling Project)
-4. **Real Estate Valuation & Home Price Prediction System** (Applied Machine Learning Project)
 
 ---
 
@@ -209,17 +207,6 @@ Umang's portfolio features 4 primary projects across Computer Vision, Enterprise
 - **Database**: MongoDB (`pymongo`).
 - **Frontend**: React 18, Vite, modern dark CSS UI; secondary demo interface in Streamlit.
 - **Deployment**: Vercel (frontend) & FastAPI cloud server.
-
-### 3. AI Code Converter
-- **Frontend**: React, Tailwind CSS.
-- **Backend**: Node.js.
-- **AI / LLM API**: OpenAI API.
-- **Core Concepts**: AST (Abstract Syntax Tree) parsing concepts, multi-language prompt syntax mapping.
-
-### 4. Home Price Prediction System
-- **Core Language**: Python.
-- **ML Libraries**: Scikit-Learn, Pandas, NumPy, Matplotlib, Seaborn.
-- **Techniques**: Regression algorithms (Linear, Ensemble), Exploratory Data Analysis (EDA), automated outlier filtering, categorical encoding, cross-validation.
 
 ---
 
@@ -252,17 +239,6 @@ Umang's portfolio features 4 primary projects across Computer Vision, Enterprise
 - **Verified Citation Bubbles**: Transparent citations reference exact source filename and page/section number with zero fabricated document IDs.
 - **Strict Anti-Hallucination Guardrails**: Model temperature locked at 0.2 with negative prompts: answers strictly using provided excerpts or states "The answer was not found in the uploaded documents."
 - **Multi-Tenant User Isolation**: Clerk JWT authentication isolates each user's in-memory vector index space and encrypted MongoDB chat histories.
-
-### 3. AI Code Converter Features
-- Real-time syntax translation between Python, JavaScript, TypeScript, and C++.
-- Interactive web interface with side-by-side code diff previews.
-- Automated syntax validation ensuring code structures are maintained without loss.
-
-### 4. Home Price Prediction Features
-- Automated data cleansing and exploratory data analysis (EDA).
-- Outlier filtering, feature scaling, and categorical variable encoding.
-- Cross-validated regression models achieving an R² score of 0.942.
-- Interactive valuation prediction from input property features (square footage, location, rooms).
 
 ---
 
@@ -313,25 +289,13 @@ Umang's portfolio features 4 primary projects across Computer Vision, Enterprise
          └──> [ MongoDB Chat History & Audit per Clerk User ID ]
 ```
 
-### 3. AI Code Converter Architecture
-```text
-[ Source Code Input ] ──> [ AST Parsing & Prompt Framing ] ──> [ OpenAI API ] ──> [ Translated Output & Side-by-Side Diff ]
-```
-
-### 4. Home Price Prediction Architecture
-```text
-[ Housing Dataset ] ──> [ EDA & Outlier Removal ] ──> [ Feature Engineering ] ──> [ Scikit-Learn Regression ] ──> [ Price Estimate Output ]
-```
-
 ---
 
 # Resume Information
 
-Umang's portfolio provides several formats for his professional resume:
-- **Comprehensive 2-Page CV**: Downloadable PDF at `/resume.pdf` (`Umang_Kaklotar_Computer_Vision_Resume.pdf`). Covers deep technical competencies, flagship industrial computer vision projects, enterprise RAG, robotics simulation, and production methodologies.
-- **Compact 1-Page ATS CV**: High-density ATS-optimized PDF at `/resume-1page.pdf` (`Umang_Kaklotar_Computer_Vision_Resume_1Page.pdf`).
-- **Interactive HTML Resume**: Clean, printable ATS-style web page available at `/resume.html`. Includes direct print and download buttons as well as Canva import guidance.
-- **Python PDF Generator**: Script `generate_resume_pdf.py` using `fpdf2` that programmatically builds pixel-perfect vector PDFs for both 2-page and 1-page versions.
+Umang's portfolio provides downloadable and printable formats for his professional resume:
+- **Downloadable Resume (PDF)**: High-density ATS-optimized 1-page PDF available at `/resume-1page.pdf.pdf` (also mirrored at `/resume.pdf` and `/resume-1page.pdf`).
+- **Interactive HTML Resume**: Clean, printable ATS-style web page available at `/resume.html`. Includes direct print and download buttons.
 
 ---
 
@@ -351,8 +315,6 @@ Umang's portfolio provides several formats for his professional resume:
 - **GitHub Profile**: https://github.com/umangpkaklotar?tab=repositories
 - **PCB Defect Detection Live Application**: https://pcb-frontend.getvoroa.com/
 - **Document AI RAG Platform Live Application**: https://rag-frontend-omega-three.vercel.app/
-- **AI Code Converter Link**: Not specified (in-development demo in portfolio).
-- **Home Price Prediction Link**: Not specified (offline machine learning project).
 
 ---
 
